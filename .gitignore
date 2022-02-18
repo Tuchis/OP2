@@ -4,3 +4,4 @@ venv/
 .idea
 .pytest_cache
 pasha.html
+/LAB3/sandbox.py
