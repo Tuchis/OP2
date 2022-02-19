@@ -9,9 +9,15 @@ class Classroom:
     """
 
     def __init__(self, number, capacity, equipment):
+        """
+        Initialisation for class
+        """
         self.number, self.capacity, self.equipment = number, capacity, equipment
 
     def __str__(self):
+        """
+\       The print for class
+        """
         return (
             f'Classroom {self.number} has a capacity of {self.capacity} persons '
             f'and has the following equipment: {", ".join(self.equipment)}.')
@@ -36,6 +42,10 @@ class Classroom:
         return difference
 
     def __repr__(self):
+        """
+        The representation for class
+        @return:
+        """
         text = f"'{self.number}', {self.capacity}, {self.equipment}"
         return f'{self.__class__.__name__}' \
                f'({text})'

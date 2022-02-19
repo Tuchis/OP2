@@ -10,9 +10,15 @@ class AcademicBuilding:
     """
 
     def __init__(self, address, classrooms):
+        """
+        The initialisation for class
+        """
         self.address, self.classrooms = address, classrooms
 
     def __str__(self):
+        """
+        The print for class
+        """
         enter = '\n'
         return (f''
 f'{self.address}{enter}{enter.join([str(class_room) for class_room in self.classrooms])}')

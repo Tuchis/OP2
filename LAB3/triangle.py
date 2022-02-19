@@ -14,7 +14,7 @@ class Triangle:
         self.length = [self.side_length(self.first, self.second),
                        self.side_length(self.second, self.third),
                        self.side_length(self.first, self.third)]
-        sorted(self.length)
+        self.length.sort()
 
     def __str__(self):
         return f'First - {self.first}; Second - {self.second}; Third - {self.third}'
@@ -36,10 +36,7 @@ class Triangle:
         """
         The function to check if the triangle is possible
         """
-        if self.length[2] <= self.length[0] + self.length[1]:
-            return True
-        else:
-            return False
+        return self.length[2] < self.length[0] + self.length[1]
 
     def area(self):
         """
