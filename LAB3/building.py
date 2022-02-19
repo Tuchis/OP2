@@ -1,5 +1,5 @@
 """
-LAB 3 3
+LAB 3 4
 """
 import classroom
 
@@ -13,8 +13,9 @@ class AcademicBuilding:
         self.address, self.classrooms = address, classrooms
 
     def __str__(self):
-        nl = '\n'
-        return (f'{self.address}{nl}{nl.join([str(class_room) for class_room in self.classrooms])}')
+        enter = '\n'
+        return (f''
+f'{self.address}{enter}{enter.join([str(class_room) for class_room in self.classrooms])}')
 
     def total_equipment(self):
         """
@@ -37,9 +38,9 @@ class AcademicBuilding:
 def main():
     """
     MAIN FUNCTION
-    >>> classroom_016 = classroom.Classroom('016', 80, ['PC', 'projector', 'mic'])
-    >>> classroom_007 = classroom.Classroom('007', 12, ['TV'])
-    >>> classroom_008 = classroom.Classroom('008', 25, ['PC', 'projector'])
+    >>> classroom_016 = classroom.Classroom('016', 80, ['PC'])
+    >>> classroom_007 = classroom.Classroom('007', 12, [])
+    >>> classroom_008 = classroom.Classroom('008', 25, ['PC'])
     >>> classrooms = [classroom_016, classroom_007, classroom_008]
     >>> building = AcademicBuilding('Kozelnytska st. 2a', classrooms)
     >>> building.address
@@ -47,7 +48,7 @@ def main():
     >>> classrooms = [classroom_016, classroom_007, classroom_008]
     >>> building = AcademicBuilding('Kozelnytska st. 2a', classrooms)
     >>> building.total_equipment()
-    [('PC', 2), ('TV', 1), ('mic', 1), ('projector', 2)]
+    [('PC', 2)]
     """
     classroom_016 = classroom.Classroom('016', 80, ['PC', 'projector', 'mic'])
     classroom_007 = classroom.Classroom('007', 12, ['TV'])

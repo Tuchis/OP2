@@ -1,7 +1,6 @@
 """
-LAB 3 3
+LAB 3 5
 """
-import classroom
 
 
 class Point:
@@ -9,13 +8,8 @@ class Point:
     The Class for class ant its information
     """
 
-    def __init__(self, address, classrooms):
-        self.address, self.classrooms = address, classrooms
+    def __init__(self, x, y):
+        self.x, self.y = x, y
 
     def __str__(self):
-        nl = '\n'
-        return (f'{self.address}{nl}{nl.join([str(class_room) for class_room in self.classrooms])}')
-
-
-if __name__ == "__main__":
-    main()
+        return f'X - {self.x}, Y - {self.y}'

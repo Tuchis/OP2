@@ -19,17 +19,15 @@ class Classroom:
     def is_larger(self, other):
         """
         Function to check if the file is larger
-        @param other:
-        @return:
         """
         if self.capacity > other.capacity:
             return True
+        else:
+            return False
 
     def equipment_differences(self, other):
         """
         Function to find the difference between classes
-        @param other:
-        @return:
         """
         difference = []
         for equipment in self.equipment:
@@ -45,7 +43,7 @@ class Classroom:
 
 def main():
     """
-    MAIN FUNCTION
+    MAIN FUNCTION that calls everything
     >>> classroom_016 = Classroom('016', 80, ['PC', 'projector', 'mic'])
     >>> print(classroom_016)
     Classroom 016 has a capacity of 80 persons and has the following equipment: PC, projector, mic.

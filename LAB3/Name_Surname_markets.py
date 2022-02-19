@@ -4,6 +4,9 @@ LAB 3 2
 
 
 class Markets:
+    """
+    Class for Markets
+    """
     def __init__(self, name, area, categories):
         self.name, self.area, self.categories = name, area, categories
 
