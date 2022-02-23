@@ -5,3 +5,5 @@ venv/
 .pytest_cache
 pasha.html
 /LAB3/sandbox.py
+/LAB4/experiment.py
+.gitignore
