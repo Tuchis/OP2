@@ -1,3 +1,143 @@
+class Polynomial:
+    def __init__(self, coeffs):
+        """
+        Init function
+        """
+        if type(coeffs) == tuple:
+            coeffs = list(coeffs)
+        coefs = coeffs.copy()
+        try:
+            while coefs[0] == 0:
+                coefs.pop(0)
+        except IndexError:
+            pass
+        if coefs == []:
+            self.coefs = [0]
+        else:
+            self.coefs = coefs
+
+    def __str__(self):
+        """
+        Str function
+        """
+        return f"Polynomial(coeffs=[{', '.join(map(str, self.coefs))}])"
+
+    def __eq__(self, other):
+        if len(self.coefs) == 1 and type(other) == int:
+            return self.coefs[0] == other
+        if type(other) != Polynomial:
+            return False
+        if len(self.coefs) != len(other.coefs):
+            return False
+        else:
+            for elem_order in range(len(self.coefs)):
+                if self.coefs[elem_order] != other.coefs[elem_order]:
+                    return False
+            return True
+
+    def __hash__(self):
+        return hash(str(self))
+
+    def degree(self):
+        """
+        Returns degree
+        """
+        return self.coefs[0]
+
+    def coeff(self, number):
+        """
+        Returns certain coefficient
+        """
+        return self.coefs[-(number + 1)]
+
+    def evalAt(self, x):
+        """
+        Evaluates the function at certain x
+        """
+        return sum(self.coefs[order] * x ** (len(self.coefs) - order - 1) for order in range(len(self.coefs)))
+
+    def scaled(self, scale_coeff):
+        """
+        Returns polynomial with scaled coefficients by given number
+        """
+        return Polynomial([coeff * scale_coeff for coeff in self.coefs])
+
+    def derivative(self):
+        """
+        Returns derivative of given function
+        """
+        return Polynomial([(len(self.coefs) - order - 1) * self.coefs[order] for order in range(len(self.coefs))][:-1])
+
+    def addPolynomial(self, other):
+        """
+        Returns two added polynomials
+        """
+        if type(other) != Polynomial:
+            return None
+        polynomial_len = max(len(self.coefs), len(other.coefs))
+        return Polynomial(
+        [([0] * (polynomial_len - len(self.coefs)) + self.coefs)[order] +
+        ([0] * (polynomial_len - len(other.coefs)) + other.coefs)[order]
+        for order in range(polynomial_len)])
+
+    def multiplyPolynomial(self, other):
+        """
+        Returns polynomial multiplied by another polynomial
+        """
+        list_polynomial = [0] * (len(self.coefs) + len(other.coefs) - 1)
+        for first_list_order in range(len(self.coefs)):
+            for second_list_order in range(len(other.coefs)):
+                list_polynomial[first_list_order + second_list_order] +=\
+                self.coefs[first_list_order] * other.coefs[second_list_order]
+        return Polynomial(list_polynomial[::])
+
+class Quadratic(Polynomial):
+    """
+    Quadratic class, which inherits Polynomial
+    """
+    def __init__(self, coeffs):
+        """
+        Init function
+        """
+        if len(coeffs) != 3:
+            raise IndexError
+        super().__init__(coeffs)
+
+    def __str__(self):
+        """
+        Str function
+        """
+        alphabet = "abcdefghijklmnopqrstuvwxyz"
+        return f"Quadratic({', '.join(['='.join([alphabet[order], str(self.coefs[order])]) for order in range(len(self.coefs))])})"
+
+    def discriminant(self):
+        """
+        Returns discriminant of the function
+        """
+        return self.coefs[1] ** 2 - 4 * self.coefs[0] * self.coefs[2]
+
+    def numberOfRealRoots(self):
+        """
+        Returns number of real roots
+        """
+        if self.discriminant() < 0:
+            return 0
+        elif self.discriminant() == 0:
+            return 1
+        else:
+            return 2
+
+    def getRealRoots(self):
+        """
+        Finds real roots of the function
+        """
+        if self.numberOfRealRoots() != 0:
+            return sorted(list(set([(- self.coefs[1] + discr) / (2 * self.coefs[0]) \
+            for discr in (- (self.discriminant() ** (1 / 2)), self.discriminant() ** (1 / 2))])))
+        else:
+            return []
+
+
 def testPolynomialBasics():
     # we'll use a very simple str format...
     assert(str(Polynomial([1,2,3])) == "Polynomial(coeffs=[1, 2, 3])")
@@ -160,3 +300,9 @@ def testQuadraticClass():
 def testEquationClasses():
     testPolynomialClass()
     testQuadraticClass()
+
+def main():
+    testEquationClasses()
+
+if __name__ == "__main__":
+    main()
