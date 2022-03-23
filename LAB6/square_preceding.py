@@ -1,3 +1,6 @@
+"""
+LAB 6 1
+"""
 def square_preceding(values):
     """ (list of number) -> NoneType
     Replace each item in the list with square the value of the
@@ -11,5 +14,6 @@ def square_preceding(values):
         temp = values[0]
         values[0] = 0
     for i in range(1, len(values)):
-        values[i] = temp ** 2
-        temp = values[i]
+        values[i], temp = temp ** 2, values[i]
+    return values
+
