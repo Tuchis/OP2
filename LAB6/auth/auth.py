@@ -1,4 +1,5 @@
 import hashlib
+import notebook
 
 
 class AuthException(Exception):
@@ -43,6 +44,7 @@ class User:
         self.username = username
         self.password = self._encrypt_pw(password)
         self.is_logged_in = False
+        self.notebook = notebook.Menu()
 
     def _encrypt_pw(self, password):
         """Encrypt the password with the username and return
@@ -70,6 +72,10 @@ class Authenticator:
         if len(password) < 6:
             raise PasswordTooShort(username)
         self.users[username] = User(username, password)
+
+    def delete_user(self, username):
+        if username in self.users:
+            self.users.pop(username)
 
     def login(self, username, password):
         try:

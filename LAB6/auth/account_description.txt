@@ -1,0 +1,60 @@
+1. Registration
+    a. Choose option Sign up
+    b. Enter new username, new password
+    c. Check availability of username and correctness of password
+        - If the username is used, raises UsernameAlreadyExists
+        - If the password is incorrect, raises PasswordTooShort
+    d. Save the user if everything is correct
+
+2. Login
+    a. Choose option Login
+    b. Enter username, password
+    c. Check, if the info is correct
+        - If the username doesn't exist, raises InvalidUsername
+        - If the password is not right, raises InvalidPassword
+    d. If it is not, abort the operation
+    e. If everything is OK, proceed
+
+3. Notebook
+    a. When you are logged in, choose option Notes
+    b. Check, if you have the permission to have notebook
+        - If you don't have the permission, raises NotPermittedError
+    c. If you have the permission, you can see your notebook
+    d. You can work with it, and when your work is done, exit the notebook
+
+4. Test
+    a. Test is possible only if you have the test permission
+    b. If you want test the program, choose option test
+    c. If you have the permission for testing the program, you will see all users' notebooks printed (you will only see the number of notes due to the privacy policy)
+        - If you don't have the permissions, raises NotPermittedError
+
+5. Change
+    Change is a menu for a person with special permissions
+    When the program is started, only the admin has it
+    In the change menu you can add new users, delete users or grant new permissions to users.
+    1. Add user
+        a. Choose option Add user
+        b. Enter new username, new password
+        c. Check availability of username and correctness of password
+            - If the username is used, raises UsernameAlreadyExists
+            - If the password is incorrect, raises PasswordTooShort
+        d. Save the user if everything is correct
+    2. Delete user
+        a. Choose option Delete certain user
+        b. Enter username
+        c. Check the username
+            - If the username is a user, that is currently logged in, aborts the command
+            - If the username doesn't exist, raises UsernameNotExists
+        d. Delete the user if everything is correct
+    3. Add user permission
+        a. Choose option Add user permission
+        b. Enter username, permission you want to give
+        c. Check the correctness of info
+            - If the username doesn't exist, raises InvalidUsername
+            - If the permission doesn't exist, raises PermissionError
+        d. Save the user if everything is correct
+
+Permission:
+test program - permission of user to test the program
+change program - permission of user to interact with other users
+have notebook - permission of user to have the notebook
