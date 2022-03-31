@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long
 """
 LAB 7 2
 """
@@ -54,13 +55,13 @@ class Validator:
         """
         Function to validate email of a person
         """
-        return bool(re.search("^(?!\.)((?!\.\.).){1,64}(?!\.)@([a-z.]*\.(com|ua|org|net|edu|gov){,3}){1,255}$", email))
+        return bool(re.search("^[^\s\.]{1}[^\s]{1,64}[^\s\.]{1}@([a-z.]*\.(com|ua|org|net|edu|gov){,3}){1,255}$", email)) and ".." not in email
 
-    def validate_id(self, id: str):
+    def validate_id(self, given_id: str):
         """
         Function to validate id of a person
         """
-        return bool(re.search("^[0-9]{6}$", id)) and id.count("0") == 1
+        return bool(re.search("^[0-9]{6}$", given_id)) and given_id.count("0") == 1
 
     def split_validate(self, data):
         """
