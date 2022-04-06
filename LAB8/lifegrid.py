@@ -25,14 +25,14 @@ class LifeGrid:
         Returns the number of rows in the grid.
         :return: the number rows in the grid.
         """
-        pass
+        return self._grid.num_rows()
 
     def num_cols(self):
         """
         Returns the number of columns in the grid.
         :return:Returns the number of columns in the grid.
         """
-        pass
+        return self._grid.num_cols()
 
     def configure(self, coord_list):
         """
@@ -41,7 +41,8 @@ class LifeGrid:
         :param coord_list:
         :return:
         """
-        pass
+        for elem in coord_list:
+            self.set_cell(elem)
 
     def is_live_cell(self, row, col):
         """
@@ -51,23 +52,24 @@ class LifeGrid:
         :param col: column of the cell.
         :return: the result of check.
         """
-        pass
+        return True if self._grid.__getitem__((row,col)) == self.LIVE_CELL \
+            else False
 
-    def clear_cell(self, row, col):
+    def clear_cell(self, coord):
         """
         Clears the indicated cell by setting it to dead.
         :param row: row of the cell.
         :param col: column of the cell.
         """
-        pass
+        self._grid.__setitem__(coord, self.DEAD_CELL)
 
-    def set_cell(self, row, col):
+    def set_cell(self, coord):
         """
         Sets the indicated cell to be alive.
         :param row: row of the cell.
         :param col: column of the cell.
         """
-        pass
+        self._grid.__setitem__(coord, self.LIVE_CELL)
 
     def num_live_neighbors(self, row, col):
         """
@@ -76,7 +78,16 @@ class LifeGrid:
         :param col: column of the cell.
         :return:
         """
-        pass
+        count = 0
+        for x in range(3):
+            for y in range(3):
+                try:
+                    count += 1 if self._grid.__getitem__((row + y - 1, col + x -1)) == self.LIVE_CELL else 0
+                except AssertionError:
+                    pass
+        if self._grid.__getitem__((row, col)) == self.LIVE_CELL:
+            count -= 1
+        return count
 
     def __str__(self):
         """
@@ -89,4 +100,15 @@ class LifeGrid:
         DDDDD
         Where D - dead cell, L - live cell
         """
-        pass
+        s = ""
+        for row in range(self._grid.num_rows()):
+            for col in range(self._grid.num_cols()):
+                s += "L" if self._grid.__getitem__((row, col)) == self.LIVE_CELL else "D"
+                s += "\n" if row != (self._grid.num_rows() - 1) \
+                    and col == (self._grid.num_cols() - 1) else ""
+        return s
+
+if __name__ == "__main__":
+    a = LifeGrid(5,5)
+    a.se
+    print(a)
