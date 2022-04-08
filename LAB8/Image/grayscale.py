@@ -93,8 +93,7 @@ class GrayscaleImage():
                 entries[value + (number, )] = len(entries)
                 len_ent += 1
                 value = (number, )
-        print(len(compressed))
-        return sys.getsizeof(compressed)
+        return np.array(compressed, dtype='uint16')
 
 
     def lzw_decompression(self):
@@ -108,6 +107,7 @@ class GrayscaleImage():
             entries[(i,)] = i
         len_ent = 256
         decompressed = []
+        # for
 
 def main():
     """
@@ -118,14 +118,28 @@ def main():
 
     # creating greyscale image object by applying greyscale method
     image_grayscale = ImageOps.grayscale(image)
-
     photo = GrayscaleImage(*image_grayscale.size[::-1])
+
+    print("The size of blank photo")
+    print(sys.getsizeof(photo.photo))
     print(photo.width(), photo.height())
+    print("------------")
+    print("Initializing photo")
     photo.from_file(r"img.png")
-    photo.setitem(299,285, 255)
-    print(photo.getitem(299,285))
     print(photo)
-    print(photo.lzw_compression())
+    print("Size of the array: ",
+          photo.photo.size)
+    print("Memory size of one array element in bytes: ",
+          photo.photo.itemsize)
+    print("The memoru usage is : ", photo.photo.itemsize * photo.photo.size)
+    print("------------")
+    print("Compressing the photo")
+    compressed = photo.lzw_compression()
+    print("Array: ",compressed)
+    print("The length of the array: ", len(compressed))
+    print("Size of the compressed array: ", sys.getsizeof(compressed))
+    print("The difference between uncompressed and compressed: ", sys.getsizeof(photo.photo) - sys.getsizeof(compressed))
+    print("Ratio of compressing: ", sys.getsizeof(compressed) / sys.getsizeof(photo.photo) * 100, "%")
 
 if __name__ == "__main__":
     main()
