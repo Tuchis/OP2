@@ -2,6 +2,8 @@
 MODULE DOCSTRING
 """
 import numpy
+import numpy as np
+from PIL import Image, ImageOps
 
 
 class GrayscaleImage():
@@ -12,7 +14,7 @@ class GrayscaleImage():
         @param ncols: number of columns
         """
         self.nrows, self.ncols = nrows, ncols
-        self.photo = numpy.zeros((self.nrows, self.ncols))
+        self.photo = np.zeros((self.nrows, self.ncols))
 
     def __str__(self):
         """
@@ -41,7 +43,7 @@ class GrayscaleImage():
         @param value: the value, that is set
         @return: None
         """
-        pass
+        self.photo = np.full((self.nrows, self.ncols), value)
 
     def getitem(self, row, col):
         """
@@ -50,7 +52,7 @@ class GrayscaleImage():
         @param col: the column - X coord
         @return: value
         """
-        pass
+        return self.photo[row][col]
 
     def setitem(self, row, col, value):
         """
@@ -60,7 +62,7 @@ class GrayscaleImage():
         @return: value
         @return: None
         """
-        pass
+        self.photo[row][col] = value
 
     def from_file(self, path):
         """
@@ -68,14 +70,27 @@ class GrayscaleImage():
         @param path: path to the file
         @return: None
         """
-        pass
+        self.photo = np.array(ImageOps.grayscale(Image.open(path)))
 
     def lzw_compression(self):
         """
         Compressing the file using the Lempel-Ziv-Welch algorithm
         @return: None
         """
-        pass
+        entries = {}
+        for i in range(256):
+            entries[i] = [i]
+        compressed = []
+        value = []
+        for number in np.ravel(self.photo):
+            if value + [number] in list(entries.values()):
+                value = value + [number]
+            else:
+                compressed.append(list(entries.values()).index(value))
+                entries[len(entries)] = value + [number]
+                value = [number]
+        return len(compressed)
+
 
     def lzw_decompression(self):
         """
@@ -89,8 +104,19 @@ def main():
     """
     MAIN FUNCTION
     """
-    photo = GrayscaleImage(10,15)
+    # creating a image object
+    image = Image.open(r"img.png")
+
+    # creating greyscale image object by applying greyscale method
+    image_grayscale = ImageOps.grayscale(image)
+
+    photo = GrayscaleImage(*image_grayscale.size[::-1])
+    print(photo.width(), photo.height())
+    photo.from_file(r"img.png")
+    photo.setitem(299,285, 255)
+    print(photo.getitem(299,285))
     print(photo)
+    print(photo.lzw_compression())
 
 if __name__ == "__main__":
     main()
