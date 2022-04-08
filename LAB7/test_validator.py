@@ -98,11 +98,14 @@ class TestValidator(unittest.TestCase):
         assert valid.validate_email("username@domain.com") is True
         assert valid.validate_email("username+usersurname@domain.com") is True
         assert valid.validate_email("username@ucu.edu.ua") is True
+        assert valid.validate_email("korchandvlad@krasavchiki.com") is True
+        assert valid.validate_email("name.surname.fathername@google.gmail.ucu.edu.ua.com") == True
         assert valid.validate_email("usernamedomain.com") is False
         assert valid.validate_email("username@domaincom") is False
         assert valid.validate_email("username@domain.aaa") is False
         assert valid.validate_email("username@aaa") is False
         assert valid.validate_email("@domain.com") is False
+        assert valid.validate_email("korch@loh") is False
         assert valid.validate_email("myemail.@ukr.net") is False
         assert valid.validate_email("python*is super@ukr.net") is False
 
