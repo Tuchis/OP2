@@ -12,30 +12,17 @@ GRID_HEIGHT = 5
 NUM_GENS = 8
 
 
-def main():
-    grid_width = check_input("Enter the width: ")
-    grid_height = check_input("Enter the height: ")
-    num_gens = check_input("Enter the number of generations: ")
+def main(width=GRID_WIDTH, height=GRID_HEIGHT, config=INIT_CONFIG, generations=NUM_GENS):
     # Constructs the game grid and configure it.
-    grid = LifeGrid(grid_width, grid_height)
+    grid = LifeGrid(GRID_WIDTH, GRID_HEIGHT)
     grid.configure(INIT_CONFIG)
 
     # Plays the game.
     draw(grid)
-    for i in range(num_gens):
+    for i in range(NUM_GENS):
         evolve(grid)
         draw(grid)
 
-def check_input(text):
-    inputer = input(text)
-    try:
-        inp = int(inputer)
-        if inp > 0:
-            return inp
-        else:
-            return False
-    except [ValueError, TypeError]:
-        return False
 
 # Generates the next generation of organisms.
 def evolve(grid):
@@ -61,5 +48,7 @@ def evolve(grid):
 # Prints a text based representation of the game grid.
 def draw(grid):
     print(grid)
+    print("-----------")
 
-main()
+if __name__ == "__main__":
+    main()

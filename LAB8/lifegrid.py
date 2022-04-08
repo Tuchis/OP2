@@ -1,3 +1,6 @@
+"""
+Lifegrid class module
+"""
 from arrays import Array2D
 
 
@@ -41,6 +44,9 @@ class LifeGrid:
         :param coord_list:
         :return:
         """
+        for row in range(self._grid.num_rows()):
+            for col in range(self._grid.num_cols()):
+                self.clear_cell((row, col))
         for elem in coord_list:
             self.set_cell(elem)
 
@@ -79,10 +85,11 @@ class LifeGrid:
         :return:
         """
         count = 0
-        for x in range(3):
-            for y in range(3):
+        for x_coord in range(3):
+            for y_coord in range(3):
                 try:
-                    count += 1 if self._grid.__getitem__((row + y - 1, col + x -1)) == self.LIVE_CELL else 0
+                    count += 1 if self._grid.__getitem__((row + y_coord - 1,
+                                col + x_coord - 1)) == self.LIVE_CELL else 0
                 except AssertionError:
                     pass
         if self._grid.__getitem__((row, col)) == self.LIVE_CELL:
@@ -100,15 +107,22 @@ class LifeGrid:
         DDDDD
         Where D - dead cell, L - live cell
         """
-        s = ""
+        string = ""
         for row in range(self._grid.num_rows()):
             for col in range(self._grid.num_cols()):
-                s += "L" if self._grid.__getitem__((row, col)) == self.LIVE_CELL else "D"
-                s += "\n" if row != (self._grid.num_rows() - 1) \
+                string += "L" if self._grid.__getitem__((row, col)) == self.LIVE_CELL else "D"
+                string += "\n" if row != (self._grid.num_rows() - 1) \
                     and col == (self._grid.num_cols() - 1) else ""
-        return s
+        return string
+
 
 if __name__ == "__main__":
-    a = LifeGrid(5,5)
-    a.se
-    print(a)
+    # a = LifeGrid(5,5)
+    # a.configure([(1, 1), (1, 2), (2, 2), (3, 2)])
+    # print(a.num_live_neighbors(2,2))
+    # print(a.num_live_neighbors(3,2))
+    # print(a)
+    # print("_____")
+    # lifegrid_5x5.evolve(a)
+    # print(a)
+    pass
