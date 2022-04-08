@@ -1,6 +1,8 @@
 """
 MODULE DOCSTRING
 """
+import sys
+
 import numpy
 import numpy as np
 from PIL import Image, ImageOps
@@ -79,17 +81,20 @@ class GrayscaleImage():
         """
         entries = {}
         for i in range(256):
-            entries[i] = [i]
+            entries[(i,)] = i
+        len_ent = 256
         compressed = []
-        value = []
+        value = tuple()
         for number in np.ravel(self.photo):
-            if value + [number] in list(entries.values()):
-                value = value + [number]
+            if value + (number, ) in entries:
+                value = value + (number, )
             else:
-                compressed.append(list(entries.values()).index(value))
-                entries[len(entries)] = value + [number]
-                value = [number]
-        return len(compressed)
+                compressed.append(entries[value])
+                entries[value + (number, )] = len(entries)
+                len_ent += 1
+                value = (number, )
+        print(len(compressed))
+        return sys.getsizeof(compressed)
 
 
     def lzw_decompression(self):
@@ -98,7 +103,11 @@ class GrayscaleImage():
         Lempel-Ziv-Welch algorithm
         @return: None
         """
-        pass
+        entries = {}
+        for i in range(256):
+            entries[(i,)] = i
+        len_ent = 256
+        decompressed = []
 
 def main():
     """
