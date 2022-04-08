@@ -79,7 +79,7 @@ class Editor:
         if self.is_permitted("test program"):
             print("Testing program now...")
             print("Printing all notebooks of all users:")
-            print("\n".join([user + "'s notebook: \n" + str(auth.authenticator.users[user].notebook.notebook) for user in auth.authenticator.users]))
+            print("\n".join([user + "'string notebook: \n" + str(auth.authenticator.users[user].notebook.notebook) for user in auth.authenticator.users]))
 
     def change(self):
         if self.is_permitted("change program"):
