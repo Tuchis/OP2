@@ -105,6 +105,7 @@ class TestValidator(unittest.TestCase):
         assert valid.validate_email("username@domain.aaa") is False
         assert valid.validate_email("username@aaa") is False
         assert valid.validate_email("@domain.com") is False
+        assert valid.validate_email("my..email@ukr.net") is False
         assert valid.validate_email("korch@loh") is False
         assert valid.validate_email("myemail.@ukr.net") is False
         assert valid.validate_email("python*is super@ukr.net") is False
