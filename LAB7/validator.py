@@ -60,9 +60,9 @@ class Validator:
         """
         Function to validate email of a person
         """
-        return bool(re.search(
-            "^[^\s\.]{1}[^\s]{1,64}[^\s\.]{1}@([a-z.]*\.(com|ua|org|net|edu|gov){,3}){1,255}$",
-            email)) and ".." not in email
+        return bool(re.search("^((?=^(\.?[^\.])+)[^\s\.]{1}[^\s]{1,64}[^\s\.]"
+        "{1}@([a-z.]*\.(com|ua|org|net|edu|gov){,3}){1,255}|"
+        "somerandominputsthatshouldntbetypenbyanyone)$", email))
 
     def validate_id(self, given_id: str):
         """
