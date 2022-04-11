@@ -2,8 +2,6 @@
 MODULE DOCSTRING
 """
 import sys
-import math
-
 import numpy
 import numpy as np
 from PIL import Image, ImageOps
@@ -78,39 +76,117 @@ class GrayscaleImage():
     def lzw_compression(self):
         """
         Compressing the file using the Lempel-Ziv-Welch algorithm
+        First, the file is turned into the ascii table chars, which is possible
+        due to the maximum value of table - 255.
+        After that we have LZW compression for strings.
         @return: None
         """
+        # Initializing dictionary for LZW
+        dict_size = 256
+        table = {chr(i): i for i in range(dict_size)}
+
+        # Converting integers into the string
+        line = ""
+        for number in np.ravel(self.photo):
+            line += chr(number)
+
+        # LZW compression
+        value = ""
+        result = []
+        for element in line:
+            key = value + element
+            if key in table:
+                value = key
+            else:
+                result.append(table[value])
+                table[key] = dict_size
+                dict_size += 1
+                value = element
+        if value:
+            result.append(table[value])
+
+        # Optimising space for small files
+        if max(result) <= 2**16:
+            result = np.array(result, dtype='uint16')
+        else:
+            result = np.array(result, dtype='uint32')
+
+        # Defining compressed in the class
+        self.compressed = result
+
+        return result
+
+
+    def lzw_decompression(self):
+        """
+        Decompressing the file using the Lempel-Ziv-Welch algorithm
+        We decompress the file that we compressed before
+        @return: None
+        """
+        # We are using the StringIO to prevent time losses
+        # The time complexity of string concatenation
+        # using operator + is O(n²)
+        # We prevent it by using that library
+        from io import StringIO
+
+        # Initializing dictionary
+        dict_size = 256
+        table = {i: chr(i) for i in range(dict_size)}
+
+        result = StringIO()
+        compressed = list(self.compressed)
+        element = chr(compressed.pop(0))
+        result.write(element)
+
+        # LZW decompression
+        for key in compressed:
+            if key in table:
+                value = table[key]
+            elif key == dict_size:
+                value = element + element[0]
+            else:
+                raise ValueError('Bad compressed k: %s' % key)
+            result.write(value)
+            table[dict_size] = element + value[0]
+            dict_size += 1
+            element = value
+
+        # Unpacking the StringIO object
+        result = result.getvalue()
+        table = {chr(i): i for i in range(dict_size)}
+        line = ""
+        for elem in result:
+            line += str(table[elem]) + " "
+        return np.array([int(i) for i in line.strip().split()], dtype="uint8").reshape((self.height(), self.width()))
+
+    """
+    Following LZW are very slow and are using integers and tuples instead of
+    strings in realisation. They're not worth to look at
+
+    def lzw_compression(self):
         entries = {}
         for i in range(256):
             entries[(i,)] = i
-        len_ent = 256
+        len_ent = 257
         compressed = []
         value = tuple()
-        entries[np.ravel(self.photo)[0], np.ravel(self.photo)[1]] = len_ent
-        len_ent += 1
+        entries[np.ravel(self.photo)[0], np.ravel(self.photo)[1]] = 256
         for number in np.ravel(self.photo):
             if value + (number, ) in entries:
                 value = value + (number, )
             else:
                 compressed.append(entries[value])
-                if len_ent == 2 ** 16:
-                    len_ent = 256
-                if len(entries) - len_ent >= 256:
-                    del entries[list(entries.keys())[len_ent]]# 179 175 174 171 168 167 166 164 163 162
                 entries[value + (number, )] = len_ent
                 len_ent += 1
                 value = (number, )
         compressed += value
-        self.compressed = np.array(compressed, dtype='uint16')
+        if max(compressed) <= 2**16:
+            self.compressed = np.array(compressed, dtype='uint16')
+        else:
+            self.compressed = np.array(compressed, dtype='uint32')
         return self.compressed
 
-
     def lzw_decompression(self):
-        """
-        Decompressing the file, which was compressed with the
-        Lempel-Ziv-Welch algorithm
-        @return: None
-        """
         entries = {}
         for i in range(256):
             entries[i] = (i, )
@@ -158,58 +234,53 @@ class GrayscaleImage():
             entries[entries_cursor] = add
             entries_cursor += 1
         return np.array(decompressed, dtype='uint8').reshape((self.height(), self.width()))
-
+    """
 
 def main():
     """
     MAIN FUNCTION
     """
-    # creating a image object
-    image = Image.open(r"img.png")
+    # Creating an image object
+    file = r"img_1.png"
+    image = Image.open(file)
 
-    # creating greyscale image object by applying greyscale method
+    # Creating greyscale image object by applying greyscale method
     image_grayscale = ImageOps.grayscale(image)
     photo = GrayscaleImage(*image_grayscale.size[::-1])
 
+    # Info
     print("The size of blank photo")
     print(sys.getsizeof(photo.photo))
     print(photo.width(), photo.height())
+
+    # Initializing
     print("------------")
     print("Initializing photo")
-    photo.from_file(r"img.png")
+    photo.from_file(file)
     print(photo)
-    print("Size of the array: ",
-          photo.photo.size)
-    print("Memory size of one array element in bytes: ",
-          photo.photo.itemsize)
-    print("The memory usage is : ", photo.photo.itemsize * photo.photo.size)
+    print(f"Number of elements: {numpy.size(photo.photo)}")
     print("------------")
-    print("Changing some values ot have better tests")
-    photo.photo[0][3] = 175
-    photo.photo[0][4] = 175
-    photo.photo[0][5] = 175
-    photo.photo[0][6] = 175
+
+    # Compressing
     print("Compressing the photo")
     compressed = photo.lzw_compression()
     print("Array: ",compressed)
     print("The length of the array: ", len(compressed))
-    print("Size of the compressed array: ", sys.getsizeof(compressed))
-    print("The difference between uncompressed and compressed: ", sys.getsizeof(photo.photo) - sys.getsizeof(compressed))
-    print("Ratio of compressing: ", sys.getsizeof(compressed) / sys.getsizeof(photo.photo) * 100, "%")
-    #Decompressing
+    print("The difference between uncompressed and compressed: ", photo.photo.size - len(compressed), "elements")
+    print("Ratio of compressing: ", len(compressed) / photo.photo.size * 100, "%")
     print("-------------")
+
+    # Decompressing
     print("Decompressing of the photo")
     decompressed = photo.lzw_decompression()
     print(photo)
-    print(decompressed)
-    print(len(decompressed))
-    print("Size of the array: ",
-          decompressed.size)
-    print("Memory size of one array element in bytes: ",
-          decompressed.itemsize)
-    print("The memoru usage is : ", decompressed.itemsize * decompressed.size)
+    print("Comparison with the staring file:")
     print(decompressed == photo.photo)
     print("------------")
+
+    # Visualising the unpacked photo
+    image = Image.fromarray(decompressed)
+    image.show()
 
 if __name__ == "__main__":
     main()
