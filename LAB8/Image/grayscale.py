@@ -1,14 +1,16 @@
 """
 MODULE DOCSTRING
 """
+import os.path
 import sys
 import numpy
 import numpy as np
+import inspect
 from PIL import Image, ImageOps
 
 
 class GrayscaleImage():
-    def __init__(self, nrows, ncols):
+    def __init__(self, nrows=1, ncols=1):
         """
         Init method
         @param nrows: number of rows
@@ -44,6 +46,7 @@ class GrayscaleImage():
         @param value: the value, that is set
         @return: None
         """
+        assert isinstance(value, int) and 0 <= value <= 255, "Wrong value"
         self.photo = np.full((self.nrows, self.ncols), value)
 
     def getitem(self, row, col):
@@ -53,6 +56,8 @@ class GrayscaleImage():
         @param col: the column - X coord
         @return: value
         """
+        assert isinstance(row, int) and 0 <= col <= 255, "Wrong row value"
+        assert isinstance(col, int) and 0 <= col <= 255, "Wrong column value"
         return self.photo[row][col]
 
     def setitem(self, row, col, value):
@@ -63,6 +68,9 @@ class GrayscaleImage():
         @return: value
         @return: None
         """
+        assert isinstance(value, int) and 0 <= value <= 255, "Wrong value"
+        assert isinstance(row, int) and 0 <= col <= 255, "Wrong row value"
+        assert isinstance(col, int) and 0 <= col <= 255, "Wrong column value"
         self.photo[row][col] = value
 
     def from_file(self, path):
@@ -241,12 +249,16 @@ def main():
     MAIN FUNCTION
     """
     # Creating an image object
-    file = r"img_1.png"
-    image = Image.open(file)
+    file = r"img.png"
+    try:
+        image = Image.open(file)
+    except FileNotFoundError:
+        assert False, "Wrong path"
 
     # Creating greyscale image object by applying greyscale method
     image_grayscale = ImageOps.grayscale(image)
     photo = GrayscaleImage(*image_grayscale.size[::-1])
+    photo.clear(12)
 
     # Info
     print("The size of blank photo")
@@ -259,6 +271,7 @@ def main():
     photo.from_file(file)
     print(photo)
     print(f"Number of elements: {numpy.size(photo.photo)}")
+    print(f"Size: {sys.getsizeof(photo.photo)}")
     print("------------")
 
     # Compressing
@@ -267,7 +280,9 @@ def main():
     print("Array: ",compressed)
     print("The length of the array: ", len(compressed))
     print("The difference between uncompressed and compressed: ", photo.photo.size - len(compressed), "elements")
-    print("Ratio of compressing: ", len(compressed) / photo.photo.size * 100, "%")
+    print("Ratio of compressing in elements: ", len(compressed) / photo.photo.size * 100, "%")
+    print(f"Size: {sys.getsizeof(compressed)}")
+    print(f"Ratio of compressing in size: {sys.getsizeof(compressed)/sys.getsizeof(photo.photo) * 100} %")
     print("-------------")
 
     # Decompressing
@@ -280,6 +295,7 @@ def main():
 
     # Visualising the unpacked photo
     image = Image.fromarray(decompressed)
+    image.save(f"{os.path.basename(file).split('.')[0]}_grayscaled.{os.path.basename(file).split('.')[-1]}")
     image.show()
 
 if __name__ == "__main__":
