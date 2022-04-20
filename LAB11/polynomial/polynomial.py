@@ -11,19 +11,19 @@ class Polynomial :
 
     # Return the degree of the polynomial.
     def degree(self):
-        if self._poly_head is None :
+        if self._poly_head is None:
             return -1
-        else :
+        else:
             return self._poly_head.degree
 
     # Return the coefficient for the term of the given degree.
     def __getitem__(self, degree):
         assert self.degree() >= 0, "Operation not permitted on an empty polynomial."
         cur_node = self._poly_head
-        while cur_node is not None and cur_node.degree >= degree :
+        while cur_node is not None and cur_node.degree > degree:
             cur_node = cur_node.next
 
-        if cur_node is None or cur_node.degree != degree :
+        if cur_node is None or cur_node.degree != degree:
             return 0.0
         else :
             return cur_node.coefficient
@@ -65,7 +65,7 @@ class Polynomial :
         return new_poly
     
     # Helper method for appending terms to the polynomial.
-    def_append_term(self, degree, coefficient):
+    def append_term(self, degree, coefficient):
         if coefficient != 0.0:
             new_term =_PolyTermNode(degree, coefficient)
             if self._poly_head is None:
