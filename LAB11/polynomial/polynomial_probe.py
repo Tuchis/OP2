@@ -25,10 +25,21 @@ print(poly1.degree())
 print(poly2.degree())
 
 print(poly1[2.0])
+print(poly1)
+print(poly2)
 
-new_p = poly1 + poly2
+# print("Addition:")
+# new_p = poly1 + poly2
+# print(new_p[3.0], new_p[2.0],new_p[1.0],new_p[0.0])
+#
+# print("Substraction:")
+# new_p = poly1 - poly2
+# print(new_p[3.0], new_p[2.0],new_p[1.0],new_p[0.0])
+# print(new_p)
+
+print("Multiplication:")
+new_p = poly1 * poly2
 print(new_p[3.0], new_p[2.0],new_p[1.0],new_p[0.0])
+print(new_p)
+print(new_p.evaluate(2))
 
-print(poly1 + poly2)
-print(poly1 - poly2)
-print(poly1 * poly2)
