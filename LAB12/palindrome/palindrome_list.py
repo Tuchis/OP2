@@ -45,7 +45,7 @@ class Palindrome:
             stack = ArrayStack()
             for letter in word:
                 stack.push(letter)
-            for letter in word:
+            for letter in word[:len(word)//2]:
                 stack_letter = stack.pop()
                 if stack_letter == letter:
                     continue
@@ -54,6 +54,7 @@ class Palindrome:
             if append:
                 palindromes.append(word)
         Palindrome.write_to_file(path, palindromes)
+        return palindromes
 
 
 if __name__ == "__main__":
