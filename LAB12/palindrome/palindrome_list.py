@@ -53,7 +53,6 @@ class Palindrome:
                     append = False
             if append:
                 palindromes.append(word)
-
         Palindrome.write_to_file(path, palindromes)
 
 
