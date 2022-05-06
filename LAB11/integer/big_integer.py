@@ -2,9 +2,23 @@
 LAB 11 3
 Big integer operations using linked lists
 """
-from node import *
+
+VARIANT = 76
+
+class Node:
+    """
+    Node class
+    """
+    def __init__(self, data, previous=None, nexter=None):
+        """Instantiates a Node with default next of None"""
+        self.data = data
+        self.left = nexter
+        self.right = previous
 
 class BigInteger:
+    """
+    BigInteger class
+    """
     def __init__(self, initValue="0", change_value=False):
         """
         Initialising of big integer
@@ -16,10 +30,10 @@ class BigInteger:
         Str method
         """
         output = ""
-        current = self._head
+        current = self._rightest
         while current is not None:
             output += str(current.data)
-            current = current.next
+            current = current.left
         if not self.positive:
             output = "-" + output[::-1]
         else:
@@ -54,14 +68,14 @@ class BigInteger:
             return True if outcome_changer else False
         elif len(self) < len(other):
             return False if outcome_changer else True
-        current_self = self._tail
-        current_other = other._tail
+        current_self = self._leftest
+        current_other = other._leftest
         while current_self is not None:
             if current_self.data > current_other.data:
                 return True if outcome_changer else False
             elif current_self.data < current_other.data:
                 return False if outcome_changer else True
-            current_self, current_other = current_self.previous, current_other.previous
+            current_self, current_other = current_self.right, current_other.right
         return False if outcome_changer else True
 
     def __le__(self, other):
@@ -86,14 +100,14 @@ class BigInteger:
             return False if outcome_changer else True
         elif len(self) < len(other):
             return True if outcome_changer else False
-        current_self = self._tail
-        current_other = other._tail
+        current_self = self._leftest
+        current_other = other._leftest
         while current_self is not None:
             if current_self.data > current_other.data:
                 return False if outcome_changer else True
             elif current_self.data < current_other.data:
                 return True if outcome_changer else False
-            current_self, current_other = current_self.previous, current_other.previous
+            current_self, current_other = current_self.right, current_other.right
         return True if outcome_changer else False
 
     def __ge__(self, other):
@@ -108,95 +122,117 @@ class BigInteger:
         """
         if (self.positive + other.positive) % 2 != 0 or len(self) != len(other):
             return False
-        current_self = self._head
-        current_other = other._head
+        current_self = self._rightest
+        current_other = other._rightest
         while current_self is not None:
             if current_self.data != current_other.data:
                 return False
-            current_self, current_other = current_self.next, current_other.next
+            current_self, current_other = current_self.left, current_other.left
         return True
-
-    def __add__(self, other):
-        """
-        Addition of two Integers
-        """
-        if self.positive == other.positive:
-            outcome = BigInteger()
-            outcome.positive = self.positive
-            current_self = self._head
-            current_other = other._head
-            while current_self is not None or current_other is not None:
-                addition_self = current_self.data if current_self is not None else 0
-                addition_other = current_other.data if current_other is not None else 0
-                if outcome.none_check():
-                    outcome._head = Node(int((addition_self + addition_other) % 10))
-                    outcome._tail = outcome._head
-                    addition = (addition_self + addition_other) // 10
-                    current_self, current_other = current_self.next, current_other.next
-                else:
-                    rest = outcome._tail
-                    outcome._tail = Node(int((addition_self + addition_other + addition) % 10))
-                    addition = (addition_self + addition_other + addition) // 10
-                    outcome._tail.previous = rest
-                    rest.next = outcome._tail
-                    if current_self is not None:
-                        current_self = current_self.next
-                    if current_other is not None:
-                        current_other = current_other.next
-            return outcome
 
     def __mul__(self, other):
         """
         Multiplication
         """
+        # Init result
         result = BigInteger()
-        current_self = self._head
-        while current_self is not None:
-            timed_result = BigInteger()
-            current_other = other._head
-            addition = None
-            while current_other is not None:
-                if addition is None:
-                    timed_result._head = Node(int((current_self.data * current_other.data) % 10))
-                    timed_result._tail = timed_result._head
-                    addition = (current_self.data * current_other.data) // 10
-                else:
-                    rest = timed_result._tail
-                    timed_result._tail = Node(int((current_self.data * current_other.data + addition) % 10))
-                    addition = (current_self.data * current_other.data + addition) // 10
-                    timed_result._tail.previous = rest
-                    rest.next = timed_result._tail
-                current_other = current_other.next
-            if addition >= 0:
-                rest = timed_result._tail
-                timed_result._tail = Node(int(addition))
-                timed_result._tail.previous = rest
-                rest.next = timed_result._tail
-            result += timed_result
-            current_self = current_self.next
+        result.nulls(self, other)
+
+        # Result positiveness
+        result.positive = True if (self.positive + other.positive) % 2 == 0\
+            else False
+
+        # Multiplying self with other. Take the number from other and multiply
+        # with the whole self number
+        number = other._rightest
+        degree = 0
+        while number is not None:
+
+            # Getting to the right degree
+            result_number = result._rightest
+            for _ in range(degree):
+                result_number = result_number.left
+
+            # Multiplication of self number by the number and saving it into
+            # result
+            self_number = self._rightest
+            while self_number is not None:
+                result_number.data += self_number.data * number.data
+                result_number = result_number.left
+                self_number = self_number.left
+            degree += 1
+            number = number.left
+
+        # Dealing with numbers that are bigger than 9
+        number = result._rightest
+        rest = 0
+        while number is not None:
+            if number.data >= 9:
+                number.data, rest = (number.data + rest) % 10, (number.data + rest) // 10
+            elif rest != 0:
+                number.data += rest
+                rest = 0
+            number = number.left
+
+        result = result.delete_nulls()
         return result
 
-    # def __mul__(self, other):
-    #     """
-    #     Multiplication
-    #     """
-    #     for _ in range(abs(int(str(other))) - 1):
-    #         self += self
-    #     return self
+    def __pow__(self, power_big_int, modulo=None):
+        """
+        Power operator
+        Just multiply the number by itself n times :)
+        """
+        power = int(str(power_big_int))
+        result = self
+        for _ in range(power - 1):
+            result *= self
+        return result
+
+    def __rshift__(self, other):
+        """
+        Right shift
+        """
+        count = int(str(other))
+        number = self.binary_big_int()
+        for _ in range(count):
+            number._rightest, number._rightest.left.right = \
+            number._rightest.left, None
+        return number
+
+    def __or__(self, other):
+        """
+        Bitwise or
+        """
+        self_bin, other_bin = self.binary_big_int(), other.binary_big_int()
+        if len(self_bin) < len(other_bin):
+            self_bin, other_bin = other_bin, self_bin
+        result = BigInteger()
+        result.nulls(self_bin)
+        number_self, number_other, result_number = \
+            self_bin._rightest, other_bin._rightest, result._rightest
+        while number_other is not None:
+            result_number.data = 1 if number_self.data == 1 or number_other.data == 1 else 0
+            number_self, number_other, result_number = \
+                number_self.left, number_other.left, result_number.left
+        while number_self is not None:
+            result_number.data = 1 if number_self.data == 1 else 0
+            number_self, result_number = \
+                number_self.left, result_number.left
+        return result
 
     def none_check(self):
-        return self._head.next is None
-
-    def add_head(self):
-        pass
+        """
+        None check
+        """
+        return self._rightest.left is None
 
     def create_list(self, integer, change_value):
         """
         Method, that takes the integer, and refactors it into
         linked list
         """
-        self._head = None
-        self._tail = self._head
+        self._rightest = None
+        self._leftest = self._rightest
         integer_str = str(integer)
         if integer_str[0] == "-":
             self.positive = False if not change_value else True
@@ -204,14 +240,66 @@ class BigInteger:
         else:
             self.positive = True if not change_value else False
         for elem in integer_str:
-            if self._head is None:
-                self._head = Node(int(elem))
-                self._tail = self._head
+            if self._rightest is None:
+                self._rightest = Node(int(elem))
+                self._leftest = self._rightest
             else:
-                rest = self._head
-                self._head = Node(int(elem))
-                self._head.next = rest
-                rest.previous = self._head
+                rest = self._rightest
+                self._rightest = Node(int(elem))
+                self._rightest.left = rest
+                rest.right = self._rightest
+
+    def nulls(self, selfer, other=None):
+        """
+        Nulls fill
+        """
+        if other is None:
+            tries = len(selfer)
+        else:
+            tries = len(selfer) + len(other)
+        for _ in range(tries - 1):
+            rest = self._leftest
+            self._leftest = Node(0)
+            self._leftest.right = rest
+            rest.left = self._leftest
+        return self
+
+    def delete_nulls(self):
+        """
+        Dealing with nulls
+        """
+        number = self._leftest
+        while number.data == 0:
+            if number.right is None:
+                return self
+            self._leftest = number.right
+            self._leftest.left = None
+            number = self._leftest
+        return self
+
+    def binary_big_int(self):
+        """
+        BigInt into binary version
+        """
+        operand = self
+        binary = BigInteger()
+        while operand != BigInteger(0):
+            divider = BigInteger()
+            divider.nulls(operand)
+            number = operand._leftest
+            number_binary = divider._leftest
+            rest = 0
+            while number is not None:
+                number_binary.data = (number.data + rest) // 2
+                rest = 10 if (number.data + rest) % 2 else 0
+                number, number_binary = number.right, number_binary.right
+            divider.delete_nulls()
+            rest = binary._leftest
+            binary._leftest = Node(operand._rightest.data % 2)
+            binary._leftest.right, rest.left = rest, binary._leftest
+            operand = divider
+        binary._rightest, binary._rightest.left.right = binary._rightest.left, None
+        return binary
 
     def to_string(self):
         """

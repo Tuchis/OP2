@@ -10,8 +10,8 @@ class Node:
     def __init__(self, data, previous=None, next=None):
         """Instantiates a Node with default next of None"""
         self.data = data
-        self.next = next
-        self.previous = previous
+        self.left = next
+        self.right = previous
 
 class Knot:
     """Lightweight, nonpublic
