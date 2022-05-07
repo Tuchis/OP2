@@ -50,11 +50,13 @@ class Maze:
         to the exit. Returns True if a path is found and False otherwise.
         """
         stack = Stack()
+        path = Stack()
         stack.push(self._start_cell)
         while not stack.is_empty():
             cell = stack.pop()
             if self._valid_move(cell.row, cell.col):
                 self._mark_path(cell.row, cell.col)
+                path.push(_CellPosition(cell.row, cell.col))
             if self._exit_found(cell.row, cell.col):
                 return True
             dead_end = True
@@ -64,12 +66,14 @@ class Maze:
                     stack.push(_CellPosition(cell.row + row, cell.col + col))
             if dead_end:
                 self._mark_tried(cell.row, cell.col)
-                for row, col in [(0,-1), (1,0), (0,1), (-1,0)]:
-                    try:
-                        if self._maze_cells[cell.row + row, cell.col + col] == self.PATH_TOKEN:
-                            stack.push(_CellPosition(cell.row + row, cell.col + col))
-                    except IndexError:
-                        pass
+                try:
+                    stack.push(path.pop())
+                except AssertionError:
+                    for col in range(self.num_cols()):
+                        for row in range(self.num_rows()):
+                            if self._maze_cells[row, col] == self.PATH_TOKEN:
+                                self._maze_cells[row, col] = self.TRIED_TOKEN
+                    return False
         return False
 
     def reset(self):
