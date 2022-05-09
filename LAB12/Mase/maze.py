@@ -49,30 +49,29 @@ class Maze:
         Attempts to solve the maze by finding a path from the starting cell
         to the exit. Returns True if a path is found and False otherwise.
         """
-        stack = Stack()
         path = Stack()
-        stack.push(self._start_cell)
-        while not stack.is_empty():
-            cell = stack.pop()
+        path.push(self._start_cell)
+        cell = path.peek()
+        while not path.is_empty():
             if self._valid_move(cell.row, cell.col):
                 self._mark_path(cell.row, cell.col)
-                path.push(_CellPosition(cell.row, cell.col))
+                # path.push(_CellPosition(cell.row, cell.col))
             if self._exit_found(cell.row, cell.col):
                 return True
             dead_end = True
-            for row, col in [(0,-1), (1,0), (0,1), (-1,0)]:
+            for row, col in [(-1,0), (0,1), (1,0), (0,-1)]:
                 if self._valid_move(cell.row + row, cell.col + col):
                     dead_end = False
-                    stack.push(_CellPosition(cell.row + row, cell.col + col))
+                    # self._mark_path(cell.row + row, cell.col + col)
+                    path.push(_CellPosition(cell.row + row, cell.col + col))
+                    cell = path.peek()
+                    break
             if dead_end:
                 self._mark_tried(cell.row, cell.col)
+                path.pop()
                 try:
-                    stack.push(path.pop())
+                    cell = path.peek()
                 except AssertionError:
-                    for col in range(self.num_cols()):
-                        for row in range(self.num_rows()):
-                            if self._maze_cells[row, col] == self.PATH_TOKEN:
-                                self._maze_cells[row, col] = self.TRIED_TOKEN
                     return False
         return False
 
