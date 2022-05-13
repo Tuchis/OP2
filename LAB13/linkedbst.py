@@ -2,6 +2,9 @@
 File: linkedbst.py
 Author: Ken Lambert
 """
+import random
+import time
+import sys
 
 from Files.abstractcollection import AbstractCollection
 from Files.bstnode import BSTNode
@@ -9,6 +12,7 @@ from Files.linkedstack import LinkedStack
 from Files.linkedqueue import LinkedQueue
 from math import log
 
+sys.setrecursionlimit(300000)
 
 class LinkedBST(AbstractCollection):
     """An link-based binary search tree implementation."""
@@ -350,6 +354,64 @@ class LinkedBST(AbstractCollection):
         :return:
         :rtype:
         """
+        words = []
+        with open(path, encoding="utf-8") as file:
+            for line in file:
+                words.append(line.strip().split()[0])
+        random_words = random.sample(words, 10000)
+
+        # List test
+        list_time_start = time.time()
+        for word in random_words:
+            words.index(word)
+            # word in words
+        list_time = time.time() - list_time_start
+        print(f"Time of searching of 10000 words in list using default methods: {list_time}")
+        # print(words)
+
+        # # Binary tree test (orderly addition)
+        # tree = LinkedBST()
+        # tree.add(words[0])
+        # top = tree._root
+        # for word in words[1:]:
+        #     top.right = BSTNode(word)
+        #     top = top.right
+        #     tree._size += 1
+        #     print(len(tree))
+        # print("yes")
+        # # for index in range(len(words)):
+        # #     tree.add(words[index])
+        # #     print(index)
+        # tree_orderly_time_start = time.time()
+        # print("time")
+        # print(random_words)
+        # for index in range(len(random_words)):
+        #     print("find")
+        #     tree.find(random_words[index])
+        #     print("index")
+        #     print(index)
+        # tree_orderly_time_end = time.time() - tree_orderly_time_start
+        # print(f"Time of searching of 10000 words in tree, that was added orderly: {tree_orderly_time_end}")
+
+        # Binary tree test (random addition)
+        tree = LinkedBST()
+        for word in random.sample(words, len(words)):
+            tree.add(word)
+        tree_random_time_start = time.time()
+        for word in random_words:
+            tree.find(word)
+        tree_random_time_end = time.time() - tree_random_time_start
+        print(f"Time of searching of 10000 words in tree, that was added randomly: {tree_random_time_end}")
+
+        # Binary tree test (Balanced)
+        tree = tree.rebalance()
+        tree_balanced_time_start = time.time()
+        for word in random_words:
+            tree.find(word)
+        tree_balanced_time_end = time.time() - tree_balanced_time_start
+        print(f"Time of searching of 10000 words in tree, that was balanced: {tree_balanced_time_end}")
+
+
 
 
 if __name__ == "__main__":
@@ -371,3 +433,5 @@ if __name__ == "__main__":
     print(a.predecessor(11))
     print(a.predecessor(1))
     print(a.rangeFind(5,11))
+    b = LinkedBST()
+    b.demo_bst("words.txt")
