@@ -434,7 +434,7 @@ class LinkedBST(AbstractCollection):
             tree.find(random_words_limited[index])
         tree_orderly_time_end = time.time() - tree_orderly_time_start
         print(f"Time of searching of 10000 words in tree,"
-        f"that was added orderly: {tree_orderly_time_end * 240 * 240}")
+        f"that was added orderly: {tree_orderly_time_end * (len(words) / 1000) * (10000 / len(random_words_limited))}")
         print(f"Due to the problems with big bin trees, the tree is limited only to 240th part of the real array, and the actual time would be very big, so that's why there is no sense to run the whole array")
 
         # Binary tree test (random addition)
