@@ -1,42 +1,34 @@
+from btnode import Node
+
 class LinkedBinaryTree:
-    def __init__(self, root):
-        self.key = root
-        self.left_child = None
-        self.right_child = None
+    def __init__(self, value):
+        self.key = Node(value)
 
 
     def insert_left(self, new_node):
-        if self.left_child == None:
-            self.left_child = LinkedBinaryTree(new_node)
-        else:
-            t = LinkedBinaryTree(new_node)
-            t.left_child = self.left_child
-            self.left_child = t
+        if self.get_left_child() == None:
+            self.key.left_child = Node(new_node)
 
 
     def insert_right(self, new_node):
-        if self.right_child == None:
-            self.right_child = LinkedBinaryTree(new_node)
-        else:
-            t = LinkedBinaryTree(new_node)
-            t.right_child = self.right_child
-            self.right_child = t
+        if self.get_right_child() == None:
+            self.key.right_child = Node(new_node)
 
 
     def get_right_child(self):
-        return self.right_child
+        return self.key.right_child
 
 
     def get_left_child(self):
-        return self.left_child
+        return self.key.left_child
 
 
     def set_root_val(self, obj):
-        self.key = obj
+        self.key.value = obj
 
 
     def get_root_val(self):
-        return self.key
+        return self.key.value
 
 
     def preorder(self):
