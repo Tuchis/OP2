@@ -17,8 +17,12 @@ class Board:
 
     def __str__(self):
         output = ""
+        signs = []
         for row in range(len(self.board)):
-            output += str(self.board[row]) + "\n"
+            for col in range(3):
+                signs.append(str(self.board[row][col]) if str(self.board[row][col])!=" " else "_")
+        for i in range(3):
+            output += " | ".join(signs[3*i:3*(i+1)]) + "\n"
         return output[:-1]
 
     def get_status(self):
@@ -149,10 +153,8 @@ class Board:
         moves = list(enumerate(decision_tree.key.childs))
         for ind in range(len(moves)):
             moves[ind] = [moves[ind][0],moves[ind][1], -recurse_sum(moves[ind][1]), moves[ind][1].height() if not isinstance(moves[ind][1], int) else 1]
-        print(moves)
         moves = sorted(moves, key=lambda x: x[2])
         moves = sorted(moves, key=lambda x: x[3])
-        print(moves)
         go = True
         for move in moves:
             if move[3] == 1 and go:

@@ -57,8 +57,6 @@ def main():
         board.make_computer_move()
         check_end(board)
 
-
-
 if __name__ == "__main__":
     main()
     board = Board()
