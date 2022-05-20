@@ -50,7 +50,7 @@ def main():
         y = get_input("Enter the Y coordinate: ")
         try:
             board.make_move((y,x), "x")
-        except KeyError:
+        except IndexError:
             print("That cell is occupied. Try other one")
             continue
         check_end(board)
@@ -60,7 +60,7 @@ def main():
 
 
 if __name__ == "__main__":
-    # main()
+    main()
     board = Board()
     board.make_move((0, 0), "x")
     board.make_move((0, 1), "x")

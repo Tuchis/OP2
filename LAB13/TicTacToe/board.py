@@ -99,7 +99,7 @@ class Board:
         return self
 
     @staticmethod
-    def get_two_moves(board):
+    def get_moves(board):
         """
         Function that returns two moves, that are sorted by the Y coordinate,
         then by X coordinate
@@ -109,7 +109,7 @@ class Board:
         lister = []
         for row in range(3):
             for col in range(3):
-                if board[row][col] == " " and len(lister) != 2:
+                if board[row][col] == " ":
                     lister.append((row, col))
         return lister
 
@@ -126,19 +126,9 @@ class Board:
                            "x": -1,
                            "draw": 0}
                 return returns[root.value.get_status()]
-            moves = Board.get_two_moves(root.value.board)
-            if len(moves) == 0:
-                return "draw"
-            elif len(moves) == 1:
-                root.insert_left(recurse_create(Node(
-                    copy.deepcopy(root.value).make_move(moves[0], turn)),
-                    "0" if turn == "x" else "x"))
-            else:
-                root.insert_left(recurse_create(Node(
-                    copy.deepcopy(root.value).make_move(moves[0], turn)),
-                    "0" if turn == "x" else "x"))
-                root.insert_right(recurse_create(Node(
-                    copy.deepcopy(root.value).make_move(moves[1], turn)),
+            moves = Board.get_moves(root.value.board)
+            for move in moves:
+                root.insert(recurse_create(Node(copy.deepcopy(root.value).make_move(move, turn)),
                     "0" if turn == "x" else "x"))
             return root
 
@@ -153,18 +143,20 @@ class Board:
             if isinstance(root, int):
                 return root
             else:
-                return recurse_sum(root.get_left_child()) + \
-                       recurse_sum(root.get_right_child())
+                return sum([recurse_sum(elem) for elem in root.childs])
 
         recurse_create(decision_tree.key)
-        if isinstance(decision_tree.key.left_child,
-                      int) and decision_tree.key.left_child == 1:
-            self.make_move(Board.get_two_moves(self.board)[0], "0")
-        elif isinstance(decision_tree.key.left_child,
-                      int) and decision_tree.key.right_child == 1:
-            self.make_move(Board.get_two_moves(self.board)[1], "0")
-        else:
-            self.make_move(Board.get_two_moves(self.board)[0]
-                       if recurse_sum(decision_tree.key.left_child) >
-                          recurse_sum(decision_tree.key.right_child)
-                       else self.get_two_moves(self.board)[1], "0")
+        moves = list(enumerate(decision_tree.key.childs))
+        for ind in range(len(moves)):
+            moves[ind] = [moves[ind][0],moves[ind][1], -recurse_sum(moves[ind][1]), moves[ind][1].height() if not isinstance(moves[ind][1], int) else 1]
+        print(moves)
+        moves = sorted(moves, key=lambda x: x[2])
+        moves = sorted(moves, key=lambda x: x[3])
+        print(moves)
+        go = True
+        for move in moves:
+            if move[3] == 1 and go:
+                self.make_move(Board.get_moves(self.board)[move[0]], "0")
+                go = False
+        if go:
+            self.make_move(Board.get_moves(self.board)[moves[0][0]], "0")
