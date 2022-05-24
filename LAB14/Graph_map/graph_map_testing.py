@@ -2,16 +2,17 @@
 MODULE DOCSTRING
 """
 from graph import Graph
-from dfs import DFS_complete, DFS, construct_path
+from dfs import DFS, construct_path
 from bfs import BFS
+from topological_sort import topological_sort
 
 
-def read_file(path):
+def read_file(path, directed = False):
     """
     Function that reads the file and makes the graph out of the
     information in it. Returns the graph
     """
-    graph = Graph()
+    graph = Graph(directed)
 
     with open(path) as file:
         lines = []
@@ -46,8 +47,8 @@ def get_vertix(graph, value):
 
 def bfs_test():
     """
-    Function that tests the bfs with the graph. You pass the graph,
-    the method tests BFS algorithm, that was realised at Stanfourd Course
+    Function that tests the bfs with the graph.
+    The method tests BFS algorithm, that was realised at Stanfourd Course
     @param graph:
     @return:
     """
@@ -61,7 +62,6 @@ def bfs_test():
     # TEST BFS
     discovered = {}
     BFS(graph, get_vertix(graph, "MATH19"), discovered)
-    print(len(discovered))
     assert (len(discovered) == 6)
     assert (get_vertix(graph, "MATH20") in discovered)
     assert (get_vertix(graph, "CS155") not in discovered)
@@ -74,13 +74,12 @@ def bfs_test():
     assert(not get_vertix(graph, "MATH20") in discovered)
     assert(not get_vertix(graph, "MATH51") in discovered)
     assert(get_vertix(graph, "CS145") in discovered)
-    print(list(discovered.keys()).index(get_vertix(graph, "CS106B")))
     assert(get_vertix(graph, "CS106B") == list(discovered.keys())[6])
 
 def dfs_test():
     """
-    Function that tests the DFS with the graph. You pass the graph,
-    the method tests DFS algorithm, that was realised at Stanfourd Course
+    Function that tests the DFS with the graph.
+    The method tests DFS algorithm, that was realised at Stanfourd Course
     @param graph:
     @return:
     """
@@ -112,6 +111,26 @@ def dfs_test():
     assert (get_vertix(graph, "CS106B") == list(discovered.keys())[7])
 
 
+def topological_sort_test():
+    """
+    Function to test topological sort realised by Stanford Course
+    The method tests graph and topological sort in it.
+    """
+    graph = read_file("stanford_cs.txt", True)
+
+    # TEST GRAPH
+    assert(isinstance(graph, Graph))
+    assert(graph.is_directed())
+    assert(graph.edge_count() == 22)
+    assert(graph.vertex_count() == 24)
+
+    # TEST TOPOLOGICAL SORT
+    topo = topological_sort(graph)
+    assert(get_vertix(graph, "MATH20") in topo)
+    assert(get_vertix(graph, "CS145") in topo)
+    assert(get_vertix(graph, "ENGR40M") in topo)
+    assert(get_vertix(graph, "CS107") == topo[15])
+
 def main():
     """
     MAIN FUNCTION
@@ -119,6 +138,7 @@ def main():
     # bfs_test()
     dfs_test()
     bfs_test()
+    topological_sort_test()
 
 
 if __name__ == "__main__":
