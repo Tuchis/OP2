@@ -33,11 +33,6 @@ def read_file(path):
 
         return graph
 
-def get_vertix(graph, value):
-    for vertex in list(graph.vertices()):
-        if vertex.element() == value:
-            return vertex
-
 def bfs_test():
     """
     Function that tests the bfs with the graph. You pass the graph,
