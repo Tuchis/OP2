@@ -100,8 +100,12 @@ def main():
     """
     MAIN FUNCTION
     """
+    print("Start of the tests...")
+    print("DSF TESTS...")
     dfs_test()
+    print("BFS TESTS...")
     bfs_test()
+    print("ALL TESTS PASSED. CONGRATULATIONS")
 
 
 if __name__ == "__main__":

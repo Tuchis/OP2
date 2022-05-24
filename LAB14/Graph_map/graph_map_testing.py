@@ -7,7 +7,7 @@ from bfs import BFS
 from topological_sort import topological_sort
 
 
-def read_file(path, directed = False):
+def read_file(path, directed=False):
     """
     Function that reads the file and makes the graph out of the
     information in it. Returns the graph
@@ -41,6 +41,9 @@ def read_file(path, directed = False):
         return graph
 
 def get_vertix(graph, value):
+    """
+    Function that finds vertex by the name of the vertex
+    """
     for vertex in list(graph.vertices()):
         if vertex.element() == value:
             return vertex
@@ -135,10 +138,14 @@ def main():
     """
     MAIN FUNCTION
     """
-    # bfs_test()
+    print("Start of the tests...")
+    print("DSF TESTS...")
     dfs_test()
+    print("BFS TESTS...")
     bfs_test()
+    print("TOPOLOGICAL SORT TESTS...")
     topological_sort_test()
+    print("ALL TESTS PASSED. CONGRATULATIONS")
 
 
 if __name__ == "__main__":
