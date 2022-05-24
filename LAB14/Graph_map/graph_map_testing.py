@@ -1,12 +1,124 @@
 """
 MODULE DOCSTRING
 """
+from graph import Graph
+from dfs import DFS_complete, DFS, construct_path
+from bfs import BFS
+
+
+def read_file(path):
+    """
+    Function that reads the file and makes the graph out of the
+    information in it. Returns the graph
+    """
+    graph = Graph()
+
+    with open(path) as file:
+        lines = []
+        # Reads lines and saves vertexes into the list
+        for line in file:
+            if not line.startswith("#"):
+                for unwanted_sign in [",", "(", ")"]:
+                    line = line.replace(unwanted_sign, " ")
+                lines.append((line.strip().split()[0],
+                              line.strip().split()[1:]))
+        # Creates vertexes
+        for elem in lines:
+            graph.insert_vertex(elem[0])
+        # Creates edges
+        for elem in lines:
+            for vertex in graph.vertices():
+                if vertex.element() == elem[0]:
+                    start_vertex = vertex
+            for vert in elem[1]:
+                if vert != "none":
+                    for vertex in graph.vertices():
+                        if vertex.element() == vert:
+                            end_vertex = vertex
+                    graph.insert_edge(start_vertex, end_vertex)
+
+        return graph
+
+def get_vertix(graph, value):
+    for vertex in list(graph.vertices()):
+        if vertex.element() == value:
+            return vertex
+
+def bfs_test():
+    """
+    Function that tests the bfs with the graph. You pass the graph,
+    the method tests BFS algorithm, that was realised at Stanfourd Course
+    @param graph:
+    @return:
+    """
+    graph = read_file("stanford_cs.txt")
+    # TEST GRAPH
+    assert(isinstance(graph, Graph))
+    assert(not graph.is_directed())
+    assert(graph.edge_count() == 22)
+    assert(graph.vertex_count() == 24)
+
+    # TEST BFS
+    discovered = {}
+    BFS(graph, get_vertix(graph, "MATH19"), discovered)
+    print(len(discovered))
+    assert (len(discovered) == 6)
+    assert (get_vertix(graph, "MATH20") in discovered)
+    assert (get_vertix(graph, "CS155") not in discovered)
+    assert (get_vertix(graph, "CS106B") not in discovered)
+    assert (get_vertix(graph, "MATH19") == list(discovered.keys())[1])
+
+    discovered = {}
+    BFS(graph, get_vertix(graph, "CS103"), discovered)
+    assert(len(discovered) == 15)
+    assert(not get_vertix(graph, "MATH20") in discovered)
+    assert(not get_vertix(graph, "MATH51") in discovered)
+    assert(get_vertix(graph, "CS145") in discovered)
+    print(list(discovered.keys()).index(get_vertix(graph, "CS106B")))
+    assert(get_vertix(graph, "CS106B") == list(discovered.keys())[6])
+
+def dfs_test():
+    """
+    Function that tests the DFS with the graph. You pass the graph,
+    the method tests DFS algorithm, that was realised at Stanfourd Course
+    @param graph:
+    @return:
+    """
+    graph = read_file("stanford_cs.txt")
+
+    # TEST GRAPH
+    assert(isinstance(graph, Graph))
+    assert(not graph.is_directed())
+    assert(graph.edge_count() == 22)
+    assert(graph.vertex_count() == 24)
+
+    # TEST DFS
+    discovered = {}
+    DFS(graph, get_vertix(graph, "MATH51"), discovered)
+    assert(len(discovered) == 6)
+    assert(get_vertix(graph, "MATH20") in discovered)
+    assert(get_vertix(graph, "MATH51") in discovered)
+    assert(not get_vertix(graph, "CS145") in discovered)
+    assert(len(construct_path(get_vertix(graph, "MATH51"),
+            get_vertix(graph, "MATH20"), discovered)) == 3)
+    assert (get_vertix(graph, "MATH19") == list(discovered.keys())[2])
+
+    discovered = {}
+    DFS(graph, get_vertix(graph, "CS103"), discovered)
+    assert(len(discovered) == 15)
+    assert(not get_vertix(graph, "MATH20") in discovered)
+    assert(not get_vertix(graph, "MATH51") in discovered)
+    assert(get_vertix(graph, "CS145") in discovered)
+    assert (get_vertix(graph, "CS106B") == list(discovered.keys())[7])
 
 
 def main():
     """
     MAIN FUNCTION
     """
+    # bfs_test()
+    dfs_test()
+    bfs_test()
 
 
 if __name__ == "__main__":
