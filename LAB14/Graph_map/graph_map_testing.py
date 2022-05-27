@@ -5,6 +5,7 @@ from graph import Graph
 from dfs import DFS, construct_path
 from bfs import BFS
 from topological_sort import topological_sort
+import time
 
 
 def read_file(path, directed=False):
@@ -138,6 +139,7 @@ def main():
     """
     MAIN FUNCTION
     """
+    timer = time.time()
     print("Start of the tests...")
     print("DSF TESTS...")
     dfs_test()
@@ -146,6 +148,7 @@ def main():
     print("TOPOLOGICAL SORT TESTS...")
     topological_sort_test()
     print("ALL TESTS PASSED. CONGRATULATIONS")
+    print("Time of the tests: ", time.time() - timer, "seconds")
 
 
 if __name__ == "__main__":
