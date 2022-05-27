@@ -234,7 +234,6 @@ class LinkedDirectedGraph(AbstractCollection):
         fromVertex = self.getVertex(fromLabel)
         toVertex   = self.getVertex(toLabel)
         fromVertex.addEdgeTo(toVertex, weight)
-        toVertex.addEdgeTo(fromVertex, weight)
         self._edgeCount += 1
     
     def containsEdge(self, fromLabel, toLabel):
